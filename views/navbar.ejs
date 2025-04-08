@@ -1,5 +1,16 @@
-<nav class="text-4xl">
-  <% navItems.forEach(navItem => { %>
-  <a href="<%= navItem.href %>"><%= navItem.name %></a>
-  <% }); %>
+<!-- Fixed full-width wrapper -->
+<nav class="fixed top-0 left-0 right-0 shadow">
+  <!-- Inner container with constrained width and horizontal padding -->
+  <div
+    class="max-w-7xl mx-auto text-lg px-4 h-16 flex justify-between items-center"
+  >
+    <h1>PokéInventory</h1>
+    <nav class="flex gap-4">
+      <% navItems.forEach(navItem => { %>
+      <a href="<%= navItem.href %>" class="hover:underline hover:font-semibold"
+        ><%= navItem.name %></a
+      >
+      <% }); %>
+    </nav>
+  </div>
 </nav>

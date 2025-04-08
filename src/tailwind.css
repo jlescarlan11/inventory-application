@@ -1,18 +1,23 @@
 /* Replace old @tailwind directives with new imports */
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 @import "tailwindcss/preflight" layer(base);
 @import "tailwindcss/theme" layer(theme);
 @import "tailwindcss/utilities" layer(utilities);
 
 @theme {
   /* Your theme customizations */
-  --color-primary: rgb(59 13 246);
-  --font-family-sans: system-ui, sans-serif;
+  --color-primary: rgb(237 223 224);
+  --color-secondary: rgb(245 245 247);
+  --color-accent: rgb(183 183 183);
+  --color-text: rgb(112 92 83);
+  --color-cards: rgba(245, 245, 247, 0.5);
+  --font-family-headings: "Orbitron", "Roboto", system-ui, sans-serif;
 }
 
 @layer utilities {
   /* Custom utilities */
 }
 
-/* body {
-  color: red;
-} */
+body {
+  font-family: var(--font-family-headings);
+}

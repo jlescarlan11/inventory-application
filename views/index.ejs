@@ -2,14 +2,69 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
-    <!-- <link rel="stylesheet" href="/styles.css" /> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="/stylesheets/style.css" rel="stylesheet" />
     <title>Document</title>
   </head>
-  <body class="flex flex-col min-h-screen bg-green-400">
+  <body
+    class="relative flex flex-col py-16 px-8 text-[var(--color-text)] bg-[var(--color-primary)] min-h-screen sm:px-4"
+  >
     <%- include('navbar') %>
-
-    <main class="flex-1 bg-amber-50"><div class="">Hello</div></main>
+    <main
+      class="flex-1 max-w-7xl sm:mx-auto p-4 flex flex-col gap-4 justify-center items-center"
+    >
+      <h1 class="text-lg font-bold">SUMMARY</h1>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+        <!-- Summary Cards -->
+        <div class="flex flex-col gap-4">
+          <div
+            class="bg-[var(--color-secondary)]/50 flex flex-col justify-start gap-4 items-center p-4 w-full"
+          >
+            <h3>Total Pokémon</h3>
+            <p>150</p>
+          </div>
+          <button class="bg-[var(--color-accent)] w-full p-4">
+            Add Pokemon
+          </button>
+        </div>
+        <div class="flex flex-col gap-4">
+          <div
+            class="bg-[var(--color-secondary)]/50 flex flex-col justify-start gap-4 items-center p-4 w-full"
+          >
+            <h3>Total Pokémon</h3>
+            <p>150</p>
+          </div>
+          <button class="bg-[var(--color-accent)] w-full p-4">
+            Add Pokemon
+          </button>
+        </div>
+        <div class="flex flex-col gap-4">
+          <div
+            class="bg-[var(--color-secondary)]/50 flex flex-col justify-start gap-4 items-center p-4 w-full"
+          >
+            <h3>Total Pokémon</h3>
+            <p>150</p>
+          </div>
+          <button class="bg-[var(--color-accent)] w-full p-4">
+            Add Pokemon
+          </button>
+        </div>
+      </div>
+      <h1 class="text-lg font-bold">EXPLORE</h1>
+      <div
+        class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full border-t-2 border-t-[var(--color-secondary)] pt-4"
+      >
+        <div class="flex flex-col">
+          <button class="bg-[var(--color-accent)] w-full p-4">Pokemon</button>
+        </div>
+        <div class="flex flex-col">
+          <button class="bg-[var(--color-accent)] w-full p-4">Pokemon</button>
+        </div>
+        <div class="flex flex-col">
+          <button class="bg-[var(--color-accent)] w-full p-4">Pokemon</button>
+        </div>
+      </div>
+    </main>
+    <%- include('footer') %>
   </body>
 </html>
