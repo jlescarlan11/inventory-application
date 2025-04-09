@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "populate-db": "node db/populatedb.js",
     "start": "node app.js",
     "dev": "npm run build-css & npm start",
     "build-css": "tailwindcss --input src/tailwind.css --output public/stylesheets/style.css --watch --cssnano"
