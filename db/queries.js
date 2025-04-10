@@ -30,57 +30,36 @@ async function getPokeInventories() {
   }, []);
 }
 
-// async function addPokemon({ name, type1_id, type2_id }) {
-//   const { rows } = await pool.query(
-//     `
-//     INSERT INTO pokemons (name, type1_id, type2_id)
-//     VALUES($1, $2, $3)
-//     RETURNING *
-//     `,
-//     [name, type1_id, type2_id]
-//   );
-// }
+async function getAllTypes() {
+  const { rows } = await pool.query("SELECT * FROM types ORDER BY name");
+  return rows;
+}
 
-// async function addTrainer({ name }) {
-//   const { rows } = await pool.query(
-//     "INSERT INTO trainers (name) VALUES ($1) RETURNING *",
-//     [name]
-//   );
-//   return rows[0];
-// }
+async function getAllPokemons() {
+  const { rows } = await pool.query(`
+        SELECT *
+        FROM pokemons p
+        LEFT JOIN types t1 ON p.type1_id = t1.id
+        LEFT JOIN types t2 ON p.type2_id = t2.id
+        ORDER BY p.name   
+        `);
 
-// async function addPokemonToInventory(trainerId, pokemonId) {
-//   const client = await pool.connect();
-//   try {
-//     await client.query("BEGIN");
+  return rows;
+}
 
-//     // Lock and check current count atomically
-//     const countResult = await client.query(
-//       "SELECT COUNT(*) FROM poke_inventories WHERE trainer_id = $1 FOR UPDATE",
-//       [trainerId]
-//     );
-//     const count = parseInt(countResult.rows[0].count, 10);
-//     if (count >= 6) {
-//       throw new Error("Trainer already has 6 Pokémon");
-//     }
+async function createPokemon({ name, type1, type2 }) {
+  const { rows } = await pool.query(
+    `INSERT INTO pokemons (name, type1_id, type2_id)
+         VALUES ($1, $2, $3)
+         RETURNING *`,
+    [name, type1, type2]
+  );
+  return rows[0];
+}
 
-//     // Insert into inventory
-//     await client.query(
-//       "INSERT INTO poke_inventories (trainer_id, pokemon_id) VALUES ($1, $2)",
-//       [trainerId, pokemonId]
-//     );
-
-//     await client.query("COMMIT");
-//   } catch (error) {
-//     await client.query("ROLLBACK");
-//     if (error.code === "23505") {
-//       throw new Error("Pokémon already exists in inventory");
-//     } else if (error.code === "23503") {
-//       throw new Error("Invalid Trainer or Pokémon ID");
-//     } else {
-//       throw error; // Re-throw other errors
-//     }
-//   } finally {
-//     client.release();
-//   }
-// }
+module.exports = {
+  getPokeInventories,
+  getAllTypes,
+  getAllPokemons,
+  createPokemon,
+};

@@ -3,14 +3,13 @@ const inventoriesRouter = Router();
 const inventoriesController = require("../controllers/inventoriesController");
 
 inventoriesRouter.get("/", inventoriesController.inventoriesSummaryGet);
-// inventoriesRouter.get(
-//   "/createTrainer",
-//   inventoriesController.inventoriesTrainersGet
-// );
-// inventoriesRouter.post(
-//   "/createTrainer",
-//   inventoriesController.inventoriesTrainersPost
-// );
+inventoriesRouter.get("/types", inventoriesController.inventoriesTypesListGet);
+inventoriesRouter.get(
+  "/pokemons",
+  inventoriesController.inventoriesPokemonsGet
+);
+// inventoriesRouter.get("/pokemons", inventoriesController.inventoriesPokemonGet);
+
 // inventoriesRouter.get(
 //   "/createPokemon",
 //   inventoriesController.inventoriesPokemonsGet
@@ -19,6 +18,16 @@ inventoriesRouter.get("/", inventoriesController.inventoriesSummaryGet);
 //   "/createPokemon",
 //   inventoriesController.inventoriesPokemonsPost
 // );
+
+// inventoriesRouter.get(
+//   "/createTrainer",
+//   inventoriesController.inventoriesTrainersGet
+// );
+// inventoriesRouter.post(
+//   "/createTrainer",
+//   inventoriesController.inventoriesTrainersPost
+// );
+
 // inventoriesRouter.Get("/createType", inventoriesController.inventoriesTypesGet);
 // inventoriesRouter.post(
 //   "/createType",
