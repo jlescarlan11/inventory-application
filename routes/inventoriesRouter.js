@@ -8,6 +8,11 @@ inventoriesRouter.get(
   "/pokemons",
   inventoriesController.inventoriesPokemonsGet
 );
+inventoriesRouter.get(
+  "/trainers",
+  inventoriesController.inventoriesTrainersGet
+);
+
 // inventoriesRouter.get("/pokemons", inventoriesController.inventoriesPokemonGet);
 
 // inventoriesRouter.get(

@@ -37,13 +37,22 @@ async function getAllTypes() {
 
 async function getAllPokemons() {
   const { rows } = await pool.query(`
-        SELECT *
+        SELECT p.name AS pokemon_name, t1.name AS type1, t2.name AS type2
         FROM pokemons p
         LEFT JOIN types t1 ON p.type1_id = t1.id
         LEFT JOIN types t2 ON p.type2_id = t2.id
         ORDER BY p.name   
         `);
 
+  return rows;
+}
+
+async function getAllTrainers() {
+  const { rows } = await pool.query(`
+    SELECT *
+    FROM trainers
+    ORDER BY created_at DESC    
+    `);
   return rows;
 }
 
@@ -61,5 +70,6 @@ module.exports = {
   getPokeInventories,
   getAllTypes,
   getAllPokemons,
+  getAllTrainers,
   createPokemon,
 };

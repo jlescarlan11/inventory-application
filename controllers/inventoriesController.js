@@ -42,6 +42,15 @@ exports.inventoriesPokemonsGet = async (req, res, next) => {
   }
 };
 
+exports.inventoriesTrainersGet = async (req, res, next) => {
+  try {
+    const trainers = await db.getAllTrainers();
+    res.render("trainers", { trainers: trainers });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // exports.inventoriesPokemonsGet = async (req, res, next) => {
 //   try {
 //     const types = await db.getAllTypes();

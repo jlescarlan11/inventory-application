@@ -6,10 +6,9 @@
     <title>Document</title>
   </head>
   <body>
-    <% if (locals.pokemons) {%> <% pokemons.forEach(pokemons => {%>
+    <% if (locals.pokemons) {%> <% pokemons.forEach(pokemon => {%>
     <p>
-      <%= pokemons.name %> | <%= pokemons.type1_id %> || <%= pokemons.type2_id
-      %>
+      <%= pokemon.pokemon_name %> | <%= pokemon.type1 %> || <%= pokemon.type2 %>
     </p>
     <%})%> <%}%>
   </body>

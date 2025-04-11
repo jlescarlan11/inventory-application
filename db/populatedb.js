@@ -62,9 +62,14 @@ ON CONFLICT (name) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS trainers (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT NOW()
 );
+
+INSERT INTO trainers (name) 
+VALUES
+    ('Red')
+ON CONFLICT (name) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS poke_inventories (
     trainer_id INTEGER REFERENCES trainers(id),
@@ -72,6 +77,22 @@ CREATE TABLE IF NOT EXISTS poke_inventories (
     caught_at TIMESTAMP DEFAULT NOW(),
     PRIMARY KEY (trainer_id, pokemon_id)
 );
+
+INSERT INTO poke_inventories (trainer_id, pokemon_id) 
+VALUES
+    (
+        (SELECT id FROM trainers WHERE name = 'Red'), 
+        (SELECT id FROM pokemons WHERE name = 'Bulbasaur')
+    ),
+    (
+        (SELECT id FROM trainers WHERE name = 'Red'), 
+        (SELECT id FROM pokemons WHERE name = 'Charmander')
+    ),
+    (
+        (SELECT id FROM trainers WHERE name = 'Red'),
+        (SELECT id FROM pokemons WHERE name = 'Squirtle')
+    );
+
 `;
 
 async function main() {
