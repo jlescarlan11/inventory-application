@@ -8,19 +8,36 @@ inventoriesRouter.get(
   "/pokemons",
   inventoriesController.inventoriesPokemonsGet
 );
+// routes/inventories.js
+inventoriesRouter.get("/trainers", inventoriesController.trainersList);
+
 inventoriesRouter.get(
-  "/trainers",
-  inventoriesController.inventoriesTrainersGet
+  "/pokemons/create",
+  inventoriesController.inventoriesCreatePokemonGet
+);
+inventoriesRouter.post(
+  "/pokemons/create",
+  inventoriesController.inventoriesCreatePokemonPost
+);
+
+inventoriesRouter.get(
+  "/trainers/create",
+  inventoriesController.inventoriesCreateTrainerGet
+);
+
+inventoriesRouter.post(
+  "/trainers/create",
+  inventoriesController.inventoriesCreateTrainerPost
 );
 
 // inventoriesRouter.get("/pokemons", inventoriesController.inventoriesPokemonGet);
 
 // inventoriesRouter.get(
-//   "/createPokemon",
+//   "/pokemons/create",
 //   inventoriesController.inventoriesPokemonsGet
 // );
 // inventoriesRouter.post(
-//   "/createPokemon",
+//   "/pokemons/create",
 //   inventoriesController.inventoriesPokemonsPost
 // );
 

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create New Trainer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+      <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+        <h1 class="text-2xl font-bold mb-6 text-gray-800">
+          Create New Trainer
+        </h1>
+
+        <form action="/trainers/create" method="POST" class="space-y-6">
+          <!-- Name Input -->
+          <div>
+            <label
+              for="name"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Trainer Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value="<%= typeof name !== 'undefined' ? name : '' %>"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <!-- Pokémon Selection -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Pokémon Team
+            </label>
+
+            <!-- Selected Pokémon Tags -->
+            <div id="selected-pokemon" class="flex flex-wrap gap-2 mb-3">
+              <% (selectedPokemons || []).forEach(pokemonId => { const pokemon =
+              pokemons.find(p => p.id == pokemonId); %> <% if (pokemon) { %>
+              <div
+                class="bg-blue-100 text-blue-800 px-2 py-1 rounded flex items-center"
+              >
+                <span><%= pokemon.pokemon_name %></span>
+                <button
+                  type="button"
+                  data-pokemon-id="<%= pokemon.id %>"
+                  class="ml-2 text-blue-600 hover:text-blue-800"
+                  onclick="removePokemon(this)"
+                >
+                  ×
+                </button>
+              </div>
+              <% } %> <% }); %>
+            </div>
+
+            <!-- Hidden selected values -->
+            <div id="hidden-inputs">
+              <% (selectedPokemons || []).forEach(pokemonId => { %>
+              <input type="hidden" name="pokemons[]" value="<%= pokemonId %>" />
+              <% }); %>
+            </div>
+
+            <!-- Dropdown Container -->
+            <div class="relative">
+              <button
+                type="button"
+                onclick="toggleDropdown()"
+                class="w-full px-3 py-2 text-left bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                Add Pokémon...
+              </button>
+
+              <!-- Custom Dropdown -->
+              <div
+                id="pokemon-dropdown"
+                class="hidden absolute w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 max-h-60 overflow-auto"
+              >
+                <div id="pokemon-list" class="divide-y">
+                  <% pokemons.forEach(pokemon => { %> <% if (!(selectedPokemons
+                  || []).includes(String(pokemon.id))) { %>
+                  <div
+                    class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
+                    data-pokemon-id="<%= pokemon.id %>"
+                    onclick="selectPokemon(this)"
+                  >
+                    <%= pokemon.pokemon_name %>
+                  </div>
+                  <% } %> <% }); %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="flex justify-end space-x-4">
+            <a
+              href="/trainers"
+              class="px-4 py-2 text-gray-700 hover:text-gray-900"
+            >
+              Cancel
+            </a>
+            <button
+              type="submit"
+              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Create Trainer
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      function toggleDropdown() {
+        const dropdown = document.getElementById("pokemon-dropdown");
+        dropdown.classList.toggle("hidden");
+      }
+
+      function selectPokemon(element) {
+        const pokemonId = element.dataset.pokemonId;
+        const pokemonName = element.textContent.trim();
+
+        // Add to selected list
+        const selectedDiv = document.getElementById("selected-pokemon");
+        const newTag = document.createElement("div");
+        newTag.className =
+          "bg-blue-100 text-blue-800 px-2 py-1 rounded flex items-center";
+        newTag.innerHTML = `
+                <span>${pokemonName}</span>
+                <button 
+                    type="button"
+                    data-pokemon-id="${pokemonId}"
+                    class="ml-2 text-blue-600 hover:text-blue-800"
+                    onclick="removePokemon(this)"
+                >
+                    ×
+                </button>
+            `;
+        selectedDiv.appendChild(newTag);
+
+        // Add hidden input
+        const hiddenInputs = document.getElementById("hidden-inputs");
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "pokemons[]";
+        input.value = pokemonId;
+        hiddenInputs.appendChild(input);
+
+        // Remove from dropdown
+        element.remove();
+
+        // Close dropdown
+        toggleDropdown();
+      }
+
+      function removePokemon(button) {
+        const pokemonId = button.dataset.pokemonId;
+        const pokemonName = button.previousElementSibling.textContent;
+
+        // Remove tag
+        button.parentElement.remove();
+
+        // Remove hidden input
+        document
+          .querySelector(`#hidden-inputs input[value="${pokemonId}"]`)
+          .remove();
+
+        // Add back to dropdown
+        const pokemonList = document.getElementById("pokemon-list");
+        const newOption = document.createElement("div");
+        newOption.className = "px-4 py-2 hover:bg-blue-50 cursor-pointer";
+        newOption.dataset.pokemonId = pokemonId;
+        newOption.textContent = pokemonName;
+        newOption.onclick = () => selectPokemon(newOption);
+        pokemonList.appendChild(newOption);
+      }
+
+      // Close dropdown when clicking outside
+      document.addEventListener("click", function (event) {
+        const dropdown = document.getElementById("pokemon-dropdown");
+        const button = document.querySelector('[onclick="toggleDropdown()"]');
+        if (
+          !dropdown.contains(event.target) &&
+          !button.contains(event.target)
+        ) {
+          dropdown.classList.add("hidden");
+        }
+      });
+    </script>
+  </body>
+</html>

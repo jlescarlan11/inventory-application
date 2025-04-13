@@ -1,14 +1,70 @@
+<!-- views/trainers/show.ejs -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Trainer Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body>
-    <% if (locals.trainers) {%> <% trainers.forEach(trainer => {%>
-    <p><%= trainer.name %></p>
-    <%})%> <%}%>
-    <!-- For commit only -->
+  <body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+      <% trainers.forEach(trainer => { %>
+      <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6 mb-6">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h1 class="text-2xl font-bold text-gray-800">
+              <%= trainer.name %>
+            </h1>
+            <p class="text-sm text-gray-500">
+              Member since: <%= new
+              Date(trainer.created_at).toLocaleDateString() %>
+            </p>
+          </div>
+          <a
+            href="/trainers/create"
+            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            Add New Trainer
+          </a>
+        </div>
+
+        <h2 class="text-xl font-semibold mb-4 text-gray-700">
+          Pokémon Collection
+        </h2>
+        <% if (trainer.pokemons && trainer.pokemons.length > 0) { %>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <% trainer.pokemons.forEach(pokemon => { %>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="flex items-center justify-between">
+              <h3 class="font-medium text-gray-800"><%= pokemon.name %></h3>
+              <span class="text-sm text-gray-500">
+                Caught: <%= new Date(pokemon.caught_at).toLocaleDateString() %>
+              </span>
+            </div>
+            <div class="mt-2">
+              <% if (pokemon.types && pokemon.types.length > 0) { %>
+              <div class="flex flex-wrap gap-2">
+                <% pokemon.types.forEach(type => { %>
+                <span
+                  class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800"
+                >
+                  <%= type.name %>
+                </span>
+                <% }); %>
+              </div>
+              <% } %>
+            </div>
+          </div>
+          <% }); %>
+        </div>
+        <% } else { %>
+        <div class="text-center py-8 text-gray-500">
+          This trainer hasn't caught any Pokémon yet.
+        </div>
+        <% } %>
+      </div>
+      <% }); %>
+    </div>
   </body>
 </html>

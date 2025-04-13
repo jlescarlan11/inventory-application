@@ -1,0 +1,92 @@
+<!-- views/pokemons/form.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Pokémon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+            <h1 class="text-2xl font-bold mb-6 text-gray-800">Create New Pokémon</h1>
+            
+            <form action="/pokemons/create" method="POST" class="space-y-6">                
+                <!-- Name Input -->
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                        Pokémon Name: 
+                    </label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        value="<%= typeof name !== 'undefined' ? name : '' %>"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                    >
+                </div>
+
+                <!-- Type 1 Selection -->
+                <div>
+                    <label for="type1" class="block text-sm font-medium text-gray-700 mb-2">
+                        Primary Type
+                    </label>
+                    <select 
+                        id="type1" 
+                        name="type1" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                    >
+                        <option value="">Select Primary Type</option>
+                        <% types.forEach(type => { %>
+                            <option 
+                                value="<%= type.id %>"
+                                <%= (typeof type1 !== 'undefined' && type1 == type.id) ? 'selected' : '' %>
+                            >
+                                <%= type.name %>
+                            </option>
+                        <% }); %>
+                    </select>
+                </div>
+
+                <!-- Type 2 Selection -->
+                <div>
+                    <label for="type2" class="block text-sm font-medium text-gray-700 mb-2">
+                        Secondary Type (Optional)
+                    </label>
+                    <select 
+                        id="type2" 
+                        name="type2" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="">Select Secondary Type</option>
+                        <% types.forEach(type => { %>
+                            <option 
+                                value="<%= type.id %>"
+                                <%= (typeof type2 !== 'undefined' && type2 == type.id) ? 'selected' : '' %>
+                            >
+                                <%= type.name %>
+                            </option>
+                        <% }); %>
+                    </select>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex justify-end space-x-4">
+                    <a href="/pokemons" class="px-4 py-2 text-gray-700 hover:text-gray-900">
+                        Cancel
+                    </a>
+                    <button 
+                        type="submit" 
+                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    >
+                        Create Pokémon
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
