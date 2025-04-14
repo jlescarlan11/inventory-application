@@ -29,6 +29,10 @@ inventoriesRouter.post(
   "/trainers/create",
   inventoriesController.inventoriesCreateTrainerPost
 );
+inventoriesRouter.get(
+  "/pokemons/search",
+  inventoriesController.pokemonsSearchGet
+);
 
 // inventoriesRouter.get("/pokemons", inventoriesController.inventoriesPokemonGet);
 

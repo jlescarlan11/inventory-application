@@ -37,7 +37,7 @@ async function getAllTypes() {
 
 async function getAllPokemons() {
   const { rows } = await pool.query(`
-        SELECT p.id, p.name AS pokemon_name, t1.name AS type1, t2.name AS type2
+        SELECT p.id, p.name AS pokemon_name, t1.name AS type1, t1.id AS type1_id, t2.name AS type2,  t2.id AS type2_id
         FROM pokemons p
         LEFT JOIN types t1 ON p.type1_id = t1.id
         LEFT JOIN types t2 ON p.type2_id = t2.id

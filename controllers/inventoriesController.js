@@ -181,9 +181,58 @@ exports.trainersList = async (req, res, next) => {
 
 exports.pokemonsSearchGet = async (req, res, next) => {
   try {
-    const { name, types } = req.query;
+    console.log(req.query);
+    let { name, types } = req.query;
+
     const pokemons = await db.getAllPokemons();
-    const selectedTypes = types ? types.split(",") : [];
+    const allTypes = await db.getAllTypes();
+
+    const filteredPokemons = pokemons.filter((pokemon) => {
+      let match = true;
+
+      // Filter by name if provided
+      if (name) {
+        match =
+          match &&
+          pokemon.pokemon_name
+            .toLowerCase()
+            .includes(name.trim().toLowerCase());
+      }
+
+      // Filter by types only if types exists and is not empty.
+      if (
+        types &&
+        ((Array.isArray(types) && types.length > 0) ||
+          (!Array.isArray(types) && types !== ""))
+      ) {
+        // Convert types to an array if it's not already.
+        if (!Array.isArray(types)) {
+          types = [types];
+        }
+
+        // Use "some" to match if the Pokémon has at least one of the selected types.
+        match =
+          match &&
+          types.some((type) => {
+            console.log(
+              String(pokemon.type1_id) === type ||
+                String(pokemon.type2_id) === type
+            );
+            return (
+              String(pokemon.type1_id) === type ||
+              String(pokemon.type2_id) === type
+            );
+          });
+      }
+
+      return match;
+    });
+
+    res.render("search", {
+      pokemons: filteredPokemons,
+      allTypes: allTypes,
+      query: req.query,
+    });
   } catch (err) {
     next(err);
   }
