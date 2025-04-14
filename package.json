@@ -3,11 +3,23 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "populate-db": "node db/populatedb.js",
+    "start": "node app.js",
+    "dev": "npm run build-css & npm start",
+    "build-css": "tailwindcss --input src/tailwind.css --output public/stylesheets/style.css --watch --cssnano"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jlescarlan11/inventory-application.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jlescarlan11/inventory-application/issues"
+  },
+  "homepage": "https://github.com/jlescarlan11/inventory-application#readme",
   "description": "",
   "dependencies": {
     "dotenv": "^16.4.7",
@@ -15,5 +27,10 @@
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
     "pg": "^8.14.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.3",
+    "concurrently": "^9.1.2",
+    "lightningcss": "^1.29.3"
   }
 }
