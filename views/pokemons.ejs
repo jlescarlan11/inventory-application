@@ -4,28 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pokémon Inventory</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      :root {
-        --color-text: #1f2937; /* equivalent to text-gray-800 */
-        --color-primary: #3b82f6; /* equivalent to blue-600 */
-      }
-      .type-tag {
-        background-color: #e2e8f0;
-        border-radius: 9999px;
-        padding: 0.25rem 0.75rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.2s;
-      }
-      .type-tag:hover {
-        background-color: #cbd5e1;
-      }
-      .dropdown-option:hover {
-        background-color: #f1f5f9;
-      }
-    </style>
+    <link href="/stylesheets/style.css" rel="stylesheet" />
+    <style></style>
   </head>
   <body
     class="relative flex flex-col py-16 px-8 text-[var(--color-text)] min-h-screen sm:px-4 bg-no-repeat bg-center bg-fixed bg-cover"
@@ -33,28 +13,26 @@
   >
     <!-- Overlay -->
     <div class="absolute inset-0 bg-[var(--color-primary)]/50 z-0"></div>
-
     <%- include('navbar') %>
-
-    <!-- Main Content Wrapper -->
-    <div class="relative z-10">
+    <main
+      class="container flex-1/2 sm:mx-auto p-4 flex flex-col gap-4 justify-start z-10"
+    >
       <!-- Header Section -->
-      <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Pokémon Inventory</h1>
-        <div class="flex items-center gap-4">
-          <span class="text-gray-600">Total: <%= pokemons.length %></span>
-          <a
-            href="/pokemons/new"
-            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-          >
-            + Add New Pokémon
-          </a>
-        </div>
+      <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-bold">
+          Total Pokemon: <%= pokemons.length %>
+        </h1>
+        <a
+          href="/pokemons/create"
+          class="bg-[var(--color-accent)] text-[var(--color-primary)] px-4 py-2 rounded-md hover:bg-[var(--color-accent)]/90"
+        >
+          + Add New Pokémon
+        </a>
       </div>
 
       <!-- Search Section -->
       <details
-        class="bg-white rounded-lg shadow-md mb-6"
+        class="bg-[var(--color-secondary)] rounded-lg shadow-md mb-4"
         <%="selectedTypes.length"
       >
         0 ? 'open' : '' %>>
@@ -80,14 +58,12 @@
         <form action="/pokemons" method="GET" class="p-6 border-t">
           <!-- Name Search -->
           <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2"
-              >Name</label
-            >
+            <label class="block text-sm font-medium mb-2">Name</label>
             <input
               type="text"
               name="name"
               value="<%= typeof name !== 'undefined' ? name : '' %>"
-              class="w-full px-3 py-2 border rounded-md"
+              class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black"
               placeholder="Search by Pokémon name..."
               autocomplete="off"
             />
@@ -95,9 +71,7 @@
 
           <!-- Type Filter -->
           <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2"
-              >Types</label
-            >
+            <label class="block text-sm font-medium mb-2">Types</label>
             <div class="relative">
               <!-- Hidden select for form submission -->
               <select name="types[]" multiple class="hidden" id="type-select">
@@ -129,20 +103,20 @@
                   type="button"
                   id="type-dropdown-toggle"
                   onclick="toggleDropdown()"
-                  class="w-full px-3 py-2 text-left bg-white border rounded-md hover:bg-gray-50"
+                  class="w-full px-3 py-2 text-left border border-[var(--color-text)] rounded-md text-[var(--color-text)]/50 focus:outline-none focus:ring-2 focus:ring-black"
                 >
                   Select types...
                 </button>
 
                 <div
                   id="type-dropdown"
-                  class="hidden absolute w-full mt-1 bg-white border rounded-md shadow-lg z-10 max-h-60 overflow-auto"
+                  class="hidden absolute w-full mt-1 bg-[var(--color-secondary)] border rounded-md shadow-lg z-10 max-h-60 overflow-auto"
                 >
                   <div id="type-options">
                     <% allTypes.forEach(type => { if
                     (!selectedTypes.includes(String(type.id))) { %>
                     <div
-                      class="dropdown-option px-4 py-2 cursor-pointer"
+                      class="border-y-[1px] border-y-[var(--color-text)]/50 px-4 py-2 cursor-pointer"
                       data-type-id="<%= type.id %>"
                       onclick="selectType(this)"
                     >
@@ -157,7 +131,7 @@
 
           <button
             type="submit"
-            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            class="bg-[var(--color-accent)] text-[var(--color-primary)] px-4 py-2 rounded-md hover:bg-[var(--color-accent)]/90"
           >
             Search
           </button>
@@ -169,30 +143,31 @@
         <% pokemons.forEach(pokemon => { const type1 = allTypes.find(t => t.id
         === pokemon.type1); const type2 = pokemon.type2 ? allTypes.find(t =>
         t.id === pokemon.type2) : null; %>
-        <div class="bg-white rounded-lg shadow-md p-4">
+        <div class="bg-[var(--color-secondary)] rounded-lg shadow-md p-4">
           <div class="flex justify-between items-start mb-2">
             <h3 class="text-lg font-semibold"><%= pokemon.pokemon_name %></h3>
-            <span class="text-gray-500"
-              >#<%= pokemon.id.toString().padStart(3, '0') %></span
-            >
+            <span class="text-[var(--color-text)]/50">
+              #<%= pokemon.id.toString().padStart(3, '0') %>
+            </span>
           </div>
 
           <div class="flex flex-wrap gap-2">
-            <% if (type1) { %>
-            <span class="type-tag"><%= type1.name %></span>
-            <% } %> <% if (type2) { %>
-            <span class="type-tag"><%= type2.name %></span>
+            <% if (pokemon.type1) { %>
+            <span class="bg-accent/50 text-xs rounded-lg px-2 py-1"
+              ><%= pokemon.type1 %>
+            </span>
+            <% } %> <% if (pokemon.type2) { %>
+            <span class="bg-accent/50 text-xs rounded-lg px-2 py-1">
+              <%= pokemon.type2 %>
+            </span>
             <% } %>
           </div>
         </div>
         <% }); %>
       </div>
-    </div>
+    </main>
 
     <script>
-      // Initialize allTypes for use in client-side code
-      const allTypes = <%- JSON.stringify(allTypes) %>;
-
       function toggleDropdown() {
         const dropdown = document.getElementById("type-dropdown");
         dropdown.classList.toggle("hidden");
@@ -234,13 +209,17 @@
 
       function removeType(typeId) {
         // Remove from selected display
-        const button = document.querySelector(`#selected-types button[onclick="removeType('${typeId}')"]`);
+        const button = document.querySelector(
+          `#selected-types button[onclick="removeType('${typeId}')"]`
+        );
         if (button) {
           button.closest(".type-tag").remove();
         }
 
         // Remove from hidden select
-        const option = document.querySelector(`#type-select option[value="${typeId}"]`);
+        const option = document.querySelector(
+          `#type-select option[value="${typeId}"]`
+        );
         if (option) {
           option.remove();
         }
@@ -262,7 +241,10 @@
       document.addEventListener("click", function (event) {
         const dropdown = document.getElementById("type-dropdown");
         const button = document.getElementById("type-dropdown-toggle");
-        if (!dropdown.contains(event.target) && !button.contains(event.target)) {
+        if (
+          !dropdown.contains(event.target) &&
+          !button.contains(event.target)
+        ) {
           dropdown.classList.add("hidden");
         }
       });
