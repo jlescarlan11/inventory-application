@@ -178,3 +178,13 @@ exports.trainersList = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.pokemonsSearchGet = async (req, res, next) => {
+  try {
+    const { name, types } = req.query;
+    const pokemons = await db.getAllPokemons();
+    const selectedTypes = types ? types.split(",") : [];
+  } catch (err) {
+    next(err);
+  }
+};
