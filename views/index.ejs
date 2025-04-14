@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/stylesheets/style.css" rel="stylesheet" />
+    <title>PokeInventory</title>
+  </head>
+  <body
+    class="relative flex flex-col py-16 px-8 text-[var(--color-text)] min-h-screen sm:px-4 bg-no-repeat bg-center bg-fixed bg-cover"
+    style="background-image: url('/wp10742485.webp')"
+  >
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-[var(--color-primary)]/50 z-0"></div>
+    <%- include('navbar') %>
+    <main
+      class="container flex-1/2 sm:mx-auto p-4 flex flex-col gap-4 justify-start items-center z-10"
+    >
+      <div class="text-center flex flex-col gap-4 my-24">
+        <h1 class="text-4xl sm:text-7xl font-bold">PokéInventory</h1>
+        <h2 class="text-sm sm:text-lg">Your Collection, Our Treasure</h2>
+      </div>
+      <div
+        class="flex flex-col gap-4 rounded-lg bg-[var(--color-secondary)]/20 drop-shadow-sm p-4 min-w-3xs"
+      >
+        <h6 class="min-w-3xs text-center">-- Main Menu --</h6>
+        <nav class="text-center">
+          <p>
+            <a href="/trainers" class="group hover:font-bold">
+              <span class="hidden group-hover:inline"> &gt; </span> View
+              Trainers
+            </a>
+          </p>
+          <p>
+            <a href="/pokemons" class="group hover:font-bold">
+              <span class="hidden group-hover:inline"> &gt; </span> View
+              Pokemons</a
+            >
+          </p>
+        </nav>
+      </div>
+    </main>
+    <%- include('footer') %>
+  </body>
+</html>
