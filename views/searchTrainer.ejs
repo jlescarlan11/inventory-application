@@ -16,52 +16,56 @@
   >
     <!-- Overlay -->
     <div class="absolute inset-0 bg-[var(--color-primary)]/50 z-0"></div>
-    <%-include('navbar')%>
+    <%- include('navbar') %>
 
     <main class="container mx-auto p-4 z-10">
       <h1 class="text-2xl font-bold mb-6">Search Results</h1>
 
-      <% if (pokemons.length > 0) { %>
+      <% if (trainers.length > 0) { %>
+      <!-- Trainer Cards Section -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-        <% pokemons.slice().reverse().forEach((pokemon) => { const type1 =
-        allTypes.find(t => t.id === pokemon.type1); const type2 = pokemon.type2
-        ? allTypes.find(t => t.id === pokemon.type2) : null; %>
+        <% trainers.forEach(trainer => { %>
         <div
           class="bg-[var(--color-secondary)]/70 backdrop-blur-md rounded-lg shadow-md p-4"
         >
           <div class="flex justify-between items-start mb-2">
-            <h3 class="text-lg font-semibold"><%= pokemon.pokemon_name %></h3>
-            <span class="text-[var(--color-text)]/50">
-              #<%= pokemon.id.toString().padStart(3, '0') %>
-            </span>
+            <div>
+              <h1 class="text-lg font-semibold"><%= trainer.name %></h1>
+              <p class="text-xs text-[var(--color-text)]/50">
+                Member since: <%= new
+                Date(trainer.created_at).toLocaleDateString() %>
+              </p>
+            </div>
           </div>
+          <h2 class="text-base font-semibold mb-2">Pokémon Collection:</h2>
           <div class="flex flex-wrap gap-2">
-            <% if (type1) { %>
+            <% if (trainer.pokemons && trainer.pokemons.length > 0) { %> <%
+            trainer.pokemons.forEach(pokemon => { %>
             <span class="bg-accent/50 text-xs rounded-lg px-2 py-1">
-              <%= type1.name %>
+              <%= pokemon.name %>
             </span>
-            <% } %> <% if (type2) { %>
-            <span class="bg-accent/50 text-xs rounded-lg px-2 py-1">
-              <%= type2.name %>
+            <% }); %> <% } else { %>
+            <span class="text-xs text-[var(--color-text)]/50">
+              This trainer hasn't caught any pokémon yet.
             </span>
             <% } %>
           </div>
         </div>
-        <% }) %>
+        <% }); %>
       </div>
       <% } else { %>
       <div class="text-center mt-10 text-lg italic text-[var(--color-text)]/80">
-        <p>No pokemons found in the collection...</p>
+        <p>No Trainers found in the collection...</p>
       </div>
       <% } %>
 
       <div class="mt-8">
         <a
-          href="/pokemons"
+          href="/trainers"
           class="flex items-center gap-2 text-[var(--color-accent)] hover:underline"
           aria-label="Return to shadow wall"
         >
-          ← Back to Pokemon Inventory
+          ← Back to Trainer Inventory
         </a>
       </div>
     </main>

@@ -34,6 +34,36 @@ inventoriesRouter.get(
   inventoriesController.pokemonsSearchGet
 );
 
+inventoriesRouter.get(
+  "/trainers/search",
+  inventoriesController.trainersSearchGet
+);
+
+inventoriesRouter.post(
+  "/trainers/:id/delete",
+  inventoriesController.trainersDeletePost
+);
+inventoriesRouter.get(
+  "/trainers/:id/update",
+  inventoriesController.trainersUpdateGet
+);
+inventoriesRouter.post(
+  "/trainers/:id/update",
+  inventoriesController.trainersUpdatePost
+);
+inventoriesRouter.post(
+  "/pokemons/:id/delete",
+  inventoriesController.pokemonsDeletePost
+);
+inventoriesRouter.get(
+  "/pokemons/:id/update",
+  inventoriesController.pokemonsUpdateGet
+);
+inventoriesRouter.post(
+  "/pokemons/:id/update",
+  inventoriesController.pokemonsUpdatePost
+);
+
 // inventoriesRouter.get("/pokemons", inventoriesController.inventoriesPokemonGet);
 
 // inventoriesRouter.get(

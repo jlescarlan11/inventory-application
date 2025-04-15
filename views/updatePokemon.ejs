@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Create New Pokémon</title>
+    <title>Update Pokémon</title>
     <link href="/stylesheets/style.css" rel="stylesheet" />
   </head>
   <body
@@ -15,9 +15,11 @@
     <%- include('navbar') %>
     <main class="container sm:mx-auto py-4 gap-4 justify-start z-10">
       <div class="max-w-2xl mx-auto bg-[var(--color-secondary)]/70 backdrop-blur-md rounded-lg shadow-md p-6">
-        <h1 class="text-2xl font-bold mb-6">Create New Pokémon</h1>
+        <h1 class="text-2xl font-bold mb-6">Update Pokémon</h1>
         <%- include('partials/errors') %>
-        <form action="/pokemons/create" method="POST" class="space-y-6">
+        <form action="/pokemons/<%= pokemon.id %>/update" method="POST" class="space-y-6">
+          <input type="hidden" name="_method" value="PUT">
+          
           <!-- Name Input -->
           <div>
             <label for="name" class="block text-sm font-medium mb-2">
@@ -27,8 +29,8 @@
               type="text" 
               id="name" 
               name="name" 
+              value="<%= pokemon.name %>"
               placeholder="Enter Pokémon's Name"
-              value="<%= typeof name !== 'undefined' ? name : '' %>"
               class="w-full px-3 py-2 border border-[var(--color-text)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
               required
             />
@@ -45,12 +47,11 @@
               class="w-full px-3 py-2 border text-text/50 border-[var(--color-text)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
               required
             >
-              <option value="" >Select Primary Type</option>
+              <option value="">Select Primary Type</option>
               <% types.forEach(type => { %>
                 <option 
                   value="<%= type.id %>"
-                  class="text-primary"
-                  <%= (typeof type1 !== 'undefined' && type1 == type.id) ? 'selected' : '' %>
+                  <%= pokemon.type1_id == type.id ? 'selected' : '' %>
                 >
                   <%= type.name %>
                 </option>
@@ -72,8 +73,7 @@
               <% types.forEach(type => { %>
                 <option 
                   value="<%= type.id %>"
-                  class="text-primary"
-                  <%= (typeof type2 !== 'undefined' && type2 == type.id) ? 'selected' : '' %>
+                  <%= pokemon.type2_id == type.id ? 'selected' : '' %>
                 >
                   <%= type.name %>
                 </option>
@@ -90,7 +90,7 @@
               type="submit" 
               class="px-4 py-2 bg-[var(--color-accent)] text-[var(--color-primary)] rounded-md hover:bg-[var(--color-accent)]/90 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:ring-offset-2"
             >
-              Create
+              Update
             </button>
           </div>
         </form>

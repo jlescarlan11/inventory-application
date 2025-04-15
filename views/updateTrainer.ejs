@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Create New Trainer</title>
+    <title>Update Trainer</title>
     <link href="/stylesheets/style.css" rel="stylesheet" />
   </head>
   <body
@@ -17,33 +17,40 @@
       <div
         class="max-w-2xl mx-auto bg-[var(--color-secondary)]/70 backdrop-blur-md rounded-lg shadow-md p-6"
       >
-        <h1 class="text-2xl font-bold mb-6">Create New Trainer</h1>
+        <h1 class="text-2xl font-bold mb-6">Update Trainer</h1>
         <%- include('partials/errors') %>
-        <form action="/trainers/create" method="POST" class="space-y-6">
-          <!-- Name Input -->
+        <!-- Use method-override for PUT request -->
+        <form
+          action="/trainers/<%= trainer.id %>/update"
+          method="POST"
+          class="space-y-6"
+        >
+          <!-- Trainer Name Input -->
           <div>
-            <label for="name" class="block text-sm font-medium mb-2">
-              Trainer Name
-            </label>
+            <label for="name" class="block text-sm font-medium mb-2"
+              >Trainer Name</label
+            >
             <input
               type="text"
               id="name"
               name="name"
-              value="<%= typeof name !== 'undefined' ? name : '' %>"
+              value="<%= trainer.name %>"
               placeholder="Enter Trainer's Name"
               class="w-full px-3 py-2 border border-[var(--color-text)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
               required
             />
           </div>
 
-          <!-- Pokémon Selection -->
+          <!-- Pokémon Team Selection -->
           <div>
-            <label class="block text-sm font-medium mb-2"> Pokémon Team </label>
+            <label class="block text-sm font-medium mb-2">Pokémon Team</label>
 
             <!-- Selected Pokémon Tags -->
             <div id="selected-pokemon" class="flex flex-wrap gap-2 mb-3">
-              <% (selectedPokemons || []).forEach(pokemonId => { const pokemon =
-              pokemons.find(p => p.id == pokemonId); %> <% if (pokemon) { %>
+              <% if (selectedPokemons && selectedPokemons.length) { %> <%
+              selectedPokemons.forEach(function(pokemonId) { var pokemon =
+              pokemons.find(function(p) { return p.id == pokemonId; }); if
+              (pokemon) { %>
               <div
                 class="bg-[var(--color-accent)]/50 text-[var(--color-primary)] px-2 py-1 rounded flex items-center"
               >
@@ -57,14 +64,15 @@
                   ×
                 </button>
               </div>
-              <% } %> <% }); %>
+              <% } }); %> <% } %>
             </div>
 
-            <!-- Hidden selected values -->
+            <!-- Hidden Selected Values -->
             <div id="hidden-inputs">
-              <% (selectedPokemons || []).forEach(pokemonId => { %>
-              <input type="hidden" name="pokemons[]" value="<%= pokemonId %>" />
-              <% }); %>
+              <% if (selectedPokemons && selectedPokemons.length) { %> <%
+              selectedPokemons.forEach(function(pokemonId) { %>
+              <input type="hidden" name="pokemons" value="<%= pokemonId %>" />
+              <% }); %> <% } %>
             </div>
 
             <!-- Dropdown Container -->
@@ -76,15 +84,14 @@
               >
                 Select Pokémon...
               </button>
-
-              <!-- Custom Dropdown -->
+              <!-- Custom Dropdown List -->
               <div
                 id="pokemon-dropdown"
                 class="hidden absolute w-full mt-1 bg-[var(--color-secondary)] border border-[var(--color-text)] rounded-md shadow-lg z-10 max-h-60 overflow-auto"
               >
                 <div id="pokemon-list" class="divide-y">
-                  <% pokemons.forEach(pokemon => { %> <% if (!(selectedPokemons
-                  || []).includes(String(pokemon.id))) { %>
+                  <% pokemons.forEach(function(pokemon) { if (!(selectedPokemons
+                  || []).includes(pokemon.id)) { %>
                   <div
                     class="px-4 py-2 hover:bg-[var(--color-accent)]/50 cursor-pointer"
                     data-pokemon-id="<%= pokemon.id %>"
@@ -92,7 +99,7 @@
                   >
                     <%= pokemon.pokemon_name %>
                   </div>
-                  <% } %> <% }); %>
+                  <% } }); %>
                 </div>
               </div>
             </div>
@@ -103,14 +110,13 @@
             <a
               href="/trainers"
               class="px-4 py-2 hover:text-[var(--color-accent)]"
+              >Cancel</a
             >
-              Cancel
-            </a>
             <button
               type="submit"
               class="px-4 py-2 bg-[var(--color-accent)] text-[var(--color-primary)] rounded-md hover:bg-[var(--color-accent)]/90 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:ring-offset-2"
             >
-              Create
+              Update
             </button>
           </div>
         </form>
@@ -120,75 +126,80 @@
     <%- include('footer') %>
 
     <script>
+      // Toggle the dropdown visibility
       function toggleDropdown() {
-        const dropdown = document.getElementById("pokemon-dropdown");
+        var dropdown = document.getElementById("pokemon-dropdown");
         dropdown.classList.toggle("hidden");
       }
 
+      // Select a Pokémon from the dropdown
       function selectPokemon(element) {
-        const pokemonId = element.dataset.pokemonId;
-        const pokemonName = element.textContent.trim();
+        var pokemonId = element.getAttribute("data-pokemon-id");
+        var pokemonName = element.textContent.trim();
 
-        // Add to selected list
-        const selectedDiv = document.getElementById("selected-pokemon");
-        const newTag = document.createElement("div");
+        // Append the selected Pokémon to the tag list
+        var selectedDiv = document.getElementById("selected-pokemon");
+        var newTag = document.createElement("div");
         newTag.className =
           "bg-[var(--color-accent)]/50 text-[var(--color-primary)] px-2 py-1 rounded flex items-center";
-        newTag.innerHTML = `
-                <span>${pokemonName}</span>
-                <button 
-                    type="button"
-                    data-pokemon-id="${pokemonId}"
-                    class="ml-2 hover:text-[var(--color-accent)]"
-                    onclick="removePokemon(this)"
-                >
-                    ×
-                </button>
-            `;
+        newTag.innerHTML =
+          '<span class="text-xs">' +
+          pokemonName +
+          "</span>" +
+          ' <button type="button" data-pokemon-id="' +
+          pokemonId +
+          '" class="ml-2 hover:text-[var(--color-accent)]" onclick="removePokemon(this)">×</button>';
         selectedDiv.appendChild(newTag);
 
-        // Add hidden input
-        const hiddenInputs = document.getElementById("hidden-inputs");
-        const input = document.createElement("input");
+        // Add the hidden input for selected Pokémon
+        var hiddenInputs = document.getElementById("hidden-inputs");
+        var input = document.createElement("input");
         input.type = "hidden";
         input.name = "pokemons[]";
         input.value = pokemonId;
         hiddenInputs.appendChild(input);
 
-        // Remove from dropdown
-        element.remove();
+        // Remove the selected item from the dropdown list
+        element.parentElement.removeChild(element);
 
-        // Close dropdown
+        // Close the dropdown after selection
         toggleDropdown();
       }
 
+      // Remove a Pokémon from the selected list
       function removePokemon(button) {
-        const pokemonId = button.dataset.pokemonId;
-        const pokemonName = button.previousElementSibling.textContent;
+        var pokemonId = button.getAttribute("data-pokemon-id");
+        var pokemonName = button.previousElementSibling.textContent;
 
-        // Remove tag
-        button.parentElement.remove();
+        // Remove the Pokémon tag from the displayed list
+        var tag = button.parentElement;
+        tag.parentElement.removeChild(tag);
 
-        // Remove hidden input
-        document
-          .querySelector(`#hidden-inputs input[value="${pokemonId}"]`)
-          .remove();
+        // Remove the corresponding hidden input
+        var hiddenInput = document.querySelector(
+          '#hidden-inputs input[value="' + pokemonId + '"]'
+        );
+        if (hiddenInput) {
+          hiddenInput.parentElement.removeChild(hiddenInput);
+        }
 
-        // Add back to dropdown
-        const pokemonList = document.getElementById("pokemon-list");
-        const newOption = document.createElement("div");
+        // Add the Pokémon back to the dropdown list
+        var pokemonList = document.getElementById("pokemon-list");
+        var newOption = document.createElement("div");
         newOption.className =
           "px-4 py-2 hover:bg-[var(--color-accent)]/50 cursor-pointer";
-        newOption.dataset.pokemonId = pokemonId;
+        newOption.setAttribute("data-pokemon-id", pokemonId);
         newOption.textContent = pokemonName;
-        newOption.onclick = () => selectPokemon(newOption);
+        newOption.onclick = function () {
+          selectPokemon(newOption);
+        };
         pokemonList.appendChild(newOption);
       }
 
       // Close dropdown when clicking outside
       document.addEventListener("click", function (event) {
-        const dropdown = document.getElementById("pokemon-dropdown");
-        const button = document.querySelector('[onclick="toggleDropdown()"]');
+        var dropdown = document.getElementById("pokemon-dropdown");
+        var button = document.querySelector('[onclick="toggleDropdown()"]');
         if (
           !dropdown.contains(event.target) &&
           !button.contains(event.target)

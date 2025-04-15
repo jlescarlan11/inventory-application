@@ -1,16 +1,63 @@
-<!-- Fixed full-width wrapper -->
-<nav class="fixed top-0 left-0 right-0 shadow">
-  <!-- Inner container with constrained width and horizontal padding -->
-  <div
-    class="max-w-7xl mx-auto text-lg px-4 h-16 flex justify-between items-center"
-  >
-    <h1>PokéInventory</h1>
-    <nav class="flex gap-4">
-      <% navItems.forEach(navItem => { %>
-      <a href="<%= navItem.href %>" class="hover:underline hover:font-semibold"
-        ><%= navItem.name %></a
+<!-- Responsive Navigation -->
+<nav
+  class="fixed top-0 left-0 right-0 shadow backdrop-blur-xs z-20 bg-transparent"
+>
+  <!-- Top Bar -->
+  <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
+    <h1 class="text-lg font-bold">PokéInventory</h1>
+    <!-- Mobile Hamburger Button (visible on small screens) -->
+    <button
+      id="mobile-menu-button"
+      class="md:hidden focus:outline-none"
+      aria-label="Toggle navigation"
+    >
+      <svg
+        class="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
       >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M4 6h16M4 12h16M4 18h16"
+        ></path>
+      </svg>
+    </button>
+    <!-- Desktop Navigation (visible on medium screens and up) -->
+    <nav class="hidden md:flex gap-4">
+      <% navItems.forEach(navItem => { %>
+      <a href="<%= navItem.href %>" class="hover:underline hover:font-semibold">
+        <%= navItem.name %>
+      </a>
       <% }); %>
     </nav>
   </div>
+
+  <!-- Mobile Navigation Menu (initially hidden) -->
+  <div
+    id="mobile-menu"
+    class="md:hidden hidden bg-transparent backdrop-blur-xs shadow px-4 py-2 border-t border-[var(--color-text)]/20"
+  >
+    <% navItems.forEach(navItem => { %>
+    <a
+      href="<%= navItem.href %>"
+      class="block py-2 hover:underline hover:font-semibold"
+    >
+      <%= navItem.name %>
+    </a>
+    <% }); %>
+  </div>
 </nav>
+
+<!-- Simple Script to Toggle Mobile Menu -->
+<script>
+  const mobileMenuButton = document.getElementById("mobile-menu-button");
+  const mobileMenu = document.getElementById("mobile-menu");
+
+  mobileMenuButton.addEventListener("click", () => {
+    mobileMenu.classList.toggle("hidden");
+  });
+</script>

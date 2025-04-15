@@ -5,66 +5,136 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Trainer Details</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="/stylesheets/style.css" rel="stylesheet" />
   </head>
-  <body class="bg-gray-100">
-    <div class="container mx-auto px-4 py-8">
-      <% trainers.forEach(trainer => { %>
-      <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6 mb-6">
-        <div class="flex justify-between items-start mb-4">
-          <div>
-            <h1 class="text-2xl font-bold text-gray-800">
-              <%= trainer.name %>
-            </h1>
-            <p class="text-sm text-gray-500">
-              Member since: <%= new
-              Date(trainer.created_at).toLocaleDateString() %>
-            </p>
-          </div>
-          <a
-            href="/trainers/create"
-            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            Add New Trainer
-          </a>
-        </div>
-
-        <h2 class="text-xl font-semibold mb-4 text-gray-700">
-          Pokémon Collection
-        </h2>
-        <% if (trainer.pokemons && trainer.pokemons.length > 0) { %>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <% trainer.pokemons.forEach(pokemon => { %>
-          <div class="bg-gray-50 p-4 rounded-lg">
-            <div class="flex items-center justify-between">
-              <h3 class="font-medium text-gray-800"><%= pokemon.name %></h3>
-              <span class="text-sm text-gray-500">
-                Caught: <%= new Date(pokemon.caught_at).toLocaleDateString() %>
-              </span>
-            </div>
-            <div class="mt-2">
-              <% if (pokemon.types && pokemon.types.length > 0) { %>
-              <div class="flex flex-wrap gap-2">
-                <% pokemon.types.forEach(type => { %>
-                <span
-                  class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800"
-                >
-                  <%= type.name %>
-                </span>
-                <% }); %>
-              </div>
-              <% } %>
-            </div>
-          </div>
-          <% }); %>
-        </div>
-        <% } else { %>
-        <div class="text-center py-8 text-gray-500">
-          This trainer hasn't caught any Pokémon yet.
-        </div>
-        <% } %>
+  <body
+    class="relative flex flex-col py-16 px-8 text-[var(--color-text)] min-h-screen sm:px-4 bg-no-repeat bg-center bg-fixed bg-cover"
+    style="background-image: url('/wp10742485.webp')"
+  >
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-[var(--color-primary)]/50 z-0"></div>
+    <%- include('navbar') %>
+    <main
+      class="container sm:mx-auto py-4 flex flex-col gap-4 justify-start z-10"
+    >
+      <!-- Header Section -->
+      <div class="flex justify-between items-center mb-4">
+        <h1 class="text-base sm:text-lg font-bold">
+          Total Trainers: <%= trainers.length %>
+        </h1>
+        <a
+          href="/trainers/create"
+          class="bg-[var(--color-accent)] text-xs sm:text-base hidden sm:block text-[var(--color-primary)] px-2 py-1 rounded-md hover:bg-[var(--color-accent)]/90"
+        >
+          Create New Trainer
+        </a>
+        <a
+          href="/trainers/create"
+          class="bg-[var(--color-accent)] text-xs block sm:hidden text-[var(--color-primary)] px-2 py-1 rounded-md hover:bg-[var(--color-accent)]/90"
+        >
+          Create
+        </a>
       </div>
-      <% }); %>
-    </div>
+
+      <!-- Search Section -->
+      <details
+        class="bg-[var(--color-secondary)]/70 backdrop-blur-md rounded-lg shadow-md mb-4"
+        <%="selectedTypes.length"
+      >
+        0 ? 'open' : '' %>>
+        <summary class="px-6 py-4 cursor-pointer list-none">
+          <div class="flex items-center gap-2">
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+            <span class="font-medium">Search Trainer</span>
+          </div>
+        </summary>
+
+        <form action="/trainers/search" method="GET" class="p-6 border-t">
+          <!-- Name Search -->
+          <div class="mb-4">
+            <label for="name" class="block text-sm font-medium mb-2"
+              >Name</label
+            >
+            <input
+              type="text"
+              name="name"
+              value="<%= typeof name !== 'undefined' ? name : '' %>"
+              class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+              placeholder="Search by Trainer's name..."
+              autocomplete="off"
+            />
+          </div>
+          <button
+            type="submit"
+            class="bg-[var(--color-accent)] text-[var(--color-primary)] px-4 py-2 rounded-md hover:bg-[var(--color-accent)]/90"
+          >
+            Search
+          </button>
+        </form>
+      </details>
+
+      <!-- Trainer Cards Section -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <% trainers.forEach(trainer => { %>
+        <div
+          class="bg-[var(--color-secondary)]/70 backdrop-blur-md rounded-lg shadow-md p-4"
+        >
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <h1 class="text-lg font-semibold"><%= trainer.name %></h1>
+              <p class="text-xs text-[var(--color-text)]/50">
+                Member since: <%= new
+                Date(trainer.created_at).toLocaleDateString() %>
+              </p>
+            </div>
+            <div>
+              <a href="trainers/<%= trainer.id %>/update" class="text-text"
+                ><span class="material-symbols-outlined"> edit </span></a
+              >
+              <form
+                action="trainers/<%= trainer.id %>/delete"
+                method="POST"
+                style="display: inline"
+              >
+                <button
+                  type="submit"
+                  class="text-text"
+                  onclick="return confirm('Are you sure you want to delete this trainer?');"
+                >
+                  <span class="material-symbols-outlined"> delete </span>
+                </button>
+              </form>
+            </div>
+          </div>
+          <h2 class="text-base font-semibold mb-2">Pokémon Collection:</h2>
+          <div class="flex flex-wrap gap-2">
+            <% if (trainer.pokemons && trainer.pokemons.length > 0) { %> <%
+            trainer.pokemons.forEach(pokemon => { %>
+            <span class="bg-accent/50 text-xs rounded-lg px-2 py-1">
+              <%= pokemon.name %>
+            </span>
+            <% }); %> <% } else { %>
+            <span class="text-xs text-[var(--color-text)]/50">
+              This trainer hasn't caught any pokémon yet.
+            </span>
+            <% } %>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </main>
+    <%- include('footer') %>
   </body>
 </html>

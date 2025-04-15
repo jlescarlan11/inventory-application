@@ -139,7 +139,102 @@ async function getAllTrainersWithPokemon() {
   }, []);
 }
 
+async function getTrainerPokemon(trainerId) {
+  const { rows } = await pool.query(
+    `SELECT p.id, p.name AS pokemon_name, t1.name AS type1, t1.id AS type1_id, t2.name AS type2,  t2.id AS type2_id
+        FROM poke_inventories pi
+        JOIN pokemons p ON pi.pokemon_id = p.id
+        LEFT JOIN types t1 ON p.type1_id = t1.id
+        LEFT JOIN types t2 ON p.type2_id = t2.id
+        WHERE pi.trainer_id = $1
+        ORDER BY p.name`,
+    [trainerId]
+  );
+  return rows;
+}
+
+async function deleteTrainer(id) {
+  await pool.query("DELETE FROM trainers WHERE id = $1", [id]);
+  await pool.query("DELETE FROM poke_inventories WHERE trainer_id = $1", [id]);
+}
+
+async function deletePokemon(id) {
+  await pool.query("DELETE FROM poke_inventories WHERE pokemon_id = $1", [id]);
+  await pool.query("DELETE FROM pokemons WHERE id = $1", [id]);
+}
+
+async function getTrainerById(id) {
+  const { rows } = await pool.query("SELECT * FROM trainers WHERE id = $1", [
+    id,
+  ]);
+  return rows[0];
+}
+
+async function updateTrainer(trainerId, trainerData, pokemonIds) {
+  await pool.query(
+    `UPDATE trainers 
+       SET name = $1 
+       WHERE id = $2`,
+    [trainerData.name, trainerId]
+  );
+
+  // Remove all existing Pokémon associations for this trainer.
+  await pool.query(
+    `DELETE FROM poke_inventories 
+       WHERE trainer_id = $1`,
+    [trainerId]
+  );
+
+  // Insert new Pokémon associations.
+  // Here we assume pokemonIds is an array of pokemon IDs.
+  if (pokemonIds && Array.isArray(pokemonIds) && pokemonIds.length > 0) {
+    for (const pokemonId of pokemonIds) {
+      await pool.query(
+        `INSERT INTO poke_inventories (trainer_id, pokemon_id, caught_at)
+           VALUES ($1, $2, NOW())`,
+        [trainerId, pokemonId]
+      );
+    }
+  }
+}
+
+async function getPokemonById(id) {
+  const { rows } = await pool.query("SELECT * FROM pokemons WHERE id = $1", [
+    id,
+  ]);
+  return rows[0];
+}
+
+async function getPokemonTypes(pokemon) {
+  const { rows } = await pool.query(
+    `SELECT * 
+     FROM types
+     WHERE id = $1 OR id = $2`,
+    [pokemon.type1_id, pokemon.type2_id]
+  );
+  return rows;
+}
+
+async function updatePokemon(id, name, type1, type2) {
+  // Update primary Pokémon details
+  await pool.query(
+    `UPDATE pokemons 
+     SET name = $1, 
+         type1_id = $2, 
+         type2_id = $3 
+     WHERE id = $4`,
+    [
+      name,
+      type1,
+      type2 || null, // Handle optional type2
+      id,
+    ]
+  );
+}
+
 module.exports = {
+  getPokemonTypes,
+  getPokemonById,
   getPokeInventories,
   getAllTypes,
   getAllPokemons,
@@ -148,5 +243,11 @@ module.exports = {
   createTrainer,
   addPokemonToTrainer,
   getTrainerByName,
+  deleteTrainer,
   getAllTrainersWithPokemon,
+  updateTrainer,
+  updatePokemon,
+  getTrainerPokemon,
+  getTrainerById,
+  deletePokemon,
 };
