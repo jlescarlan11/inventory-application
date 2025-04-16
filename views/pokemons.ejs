@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pokémon Inventory</title>
     <link href="/stylesheets/style.css" rel="stylesheet" />
-    <style></style>
   </head>
   <body
     class="relative flex flex-col py-16 px-8 text-[var(--color-text)] min-h-dvh sm:px-4 bg-no-repeat bg-center bg-fixed bg-cover"
@@ -38,10 +37,8 @@
 
       <!-- Search Section -->
       <details
-        class="bg-[var(--color-secondary)]/70 backdrop-blur-md rounded-lg shadow-md mb-4"
-        <%="selectedTypes.length"
+        class="bg-[var(--color-secondary)]/70 backdrop-blur-md rounded-lg shadow-md mb-4 ${selectedTypes.length === 0 ? 'open' : ''}"
       >
-        0 ? 'open' : '' %>>
         <summary class="px-6 py-4 cursor-pointer list-none">
           <div class="flex items-center gap-2">
             <svg
@@ -77,64 +74,50 @@
             />
           </div>
 
-          <!-- Type Filter -->
+          <!-- Type Filter with native dropdown -->
           <div class="mb-4">
             <label class="block text-sm font-medium mb-2">Types</label>
-            <div class="relative">
-              <!-- Hidden select for form submission -->
-              <select name="types" multiple class="hidden" id="type-select">
-                <% selectedTypes.forEach(typeId => { %>
-                <option value="<%= typeId %>" selected></option>
-                <% }); %>
-              </select>
-
-              <!-- Selected types display -->
-              <div id="selected-types" class="flex flex-wrap gap-2 mb-2">
-                <% selectedTypes.forEach(typeId => { const type =
-                allTypes.find(t => t.id == typeId); if (type) { %>
-                <div class="type-tag">
-                  <%= type.name %>
-                  <button
-                    type="button"
-                    class="ml-2 text-gray-500 hover:text-gray-700"
-                    onclick="removeType('<%= type.id %>')"
-                  >
-                    ×
-                  </button>
-                </div>
-                <% } }); %>
-              </div>
-
-              <!-- Custom dropdown -->
-              <div class="relative">
+            <!-- Selected Types Display -->
+            <div id="selected-types" class="flex flex-wrap gap-2 mb-2">
+              <% selectedTypes.forEach(typeId => { %> <% const type =
+              allTypes.find(t => t.id == typeId); %> <% if (type) { %>
+              <div
+                class="bg-[var(--color-accent)]/50 text-[var(--color-primary)] px-2 py-1 rounded flex items-center"
+              >
+                <span class="text-xs"><%= type.name %></span>
                 <button
                   type="button"
-                  id="type-dropdown-toggle"
-                  onclick="toggleDropdown()"
-                  class="w-full px-3 py-2 text-left border border-[var(--color-text)] rounded-md text-[var(--color-text)]/50 focus:outline-none focus:ring-2 focus:ring-black"
+                  data-type-id="<%= type.id %>"
+                  class="ml-2 hover:text-[var(--color-accent)]"
+                  onclick="removeType(this)"
                 >
-                  Select types...
+                  ×
                 </button>
-
-                <div
-                  id="type-dropdown"
-                  class="hidden absolute w-full mt-1 bg-[var(--color-secondary)]/70 backdrop-blur-md border rounded-md shadow-lg z-10 max-h-60 overflow-auto"
-                >
-                  <div id="type-options">
-                    <% allTypes.forEach(type => { if
-                    (!selectedTypes.includes(String(type.id))) { %>
-                    <div
-                      class="border-y-[1px] border-y-[var(--color-text)]/50 px-4 py-2 cursor-pointer"
-                      data-type-id="<%= type.id %>"
-                      onclick="selectType(this)"
-                    >
-                      <%= type.name %>
-                    </div>
-                    <% } }); %>
-                  </div>
-                </div>
               </div>
+              <% } }); %>
             </div>
+
+            <!-- Hidden inputs for selected types -->
+            <div id="hidden-type-inputs">
+              <% selectedTypes.forEach(typeId => { %>
+              <input type="hidden" name="types[]" value="<%= typeId %>" />
+              <% }); %>
+            </div>
+
+            <!-- Native Select Element for Type Selection -->
+            <select
+              id="type-select-native"
+              class="w-full px-3 py-2 border border-[var(--color-text)] rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] text-[var(--color-text)]/50"
+              onchange="handleTypeSelect(event)"
+            >
+              <option value="" disabled selected>Select a type...</option>
+              <% allTypes.forEach(type => { %> <% if
+              (!selectedTypes.includes(String(type.id))) { %>
+              <option value="<%= type.id %>" class="text-primary">
+                <%= type.name %>
+              </option>
+              <% } %> <% }); %>
+            </select>
           </div>
 
           <button
@@ -162,11 +145,9 @@
               <%= pokemon.pokemon_name %>
             </h3>
             <div>
-              <a href="pokemons/<%= pokemon.id %>/update" class="text-text"
-                ><span class="material-symbols-outlined text-xs">
-                  edit
-                </span></a
-              >
+              <a href="pokemons/<%= pokemon.id %>/update" class="text-text">
+                <span class="material-symbols-outlined text-xs">edit</span>
+              </a>
               <form
                 action="pokemons/<%= pokemon.id %>/delete"
                 method="POST"
@@ -177,7 +158,7 @@
                   class="text-text text-xs"
                   onclick="return confirm('Are you sure you want to delete this pokemon?');"
                 >
-                  <span class="material-symbols-outlined"> delete </span>
+                  <span class="material-symbols-outlined">delete</span>
                 </button>
               </form>
             </div>
@@ -185,12 +166,12 @@
           <div class="flex flex-wrap gap-2">
             <% if (pokemon.type1) { %>
             <span class="bg-accent/50 text-xs rounded-lg px-2 py-1"
-              ><%= pokemon.type1 %>
-            </span>
+              ><%= pokemon.type1 %></span
+            >
             <% } %> <% if (pokemon.type2) { %>
-            <span class="bg-accent/50 text-xs rounded-lg px-2 py-1">
-              <%= pokemon.type2 %>
-            </span>
+            <span class="bg-accent/50 text-xs rounded-lg px-2 py-1"
+              ><%= pokemon.type2 %></span
+            >
             <% } %>
           </div>
         </div>
@@ -200,86 +181,71 @@
     </main>
 
     <script>
-      function toggleDropdown() {
-        const dropdown = document.getElementById("type-dropdown");
-        dropdown.classList.toggle("hidden");
+      // Called when a new type is selected
+      function handleTypeSelect(event) {
+        const select = event.target;
+        const selectedOption = select.options[select.selectedIndex];
+        const typeId = selectedOption.value;
+        const typeName = selectedOption.text;
+
+        if (typeId) {
+          // Add new tag to selected types display
+          const selectedTypesDiv = document.getElementById("selected-types");
+          const newTag = document.createElement("div");
+          newTag.className =
+            "bg-[var(--color-accent)]/50 text-[var(--color-primary)] px-2 py-1 rounded flex items-center";
+          newTag.innerHTML = `
+            <span class="text-xs">${typeName}</span>
+            <button 
+              type="button"
+              data-type-id="${typeId}"
+              class="ml-2 hover:text-[var(--color-accent)]"
+              onclick="removeType(this)"
+            >
+              ×
+            </button>
+          `;
+          selectedTypesDiv.appendChild(newTag);
+
+          // Add a hidden input for form submission
+          const hiddenInputs = document.getElementById("hidden-type-inputs");
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = "types[]";
+          input.value = typeId;
+          hiddenInputs.appendChild(input);
+
+          // Remove the selected option from the native select
+          selectedOption.remove();
+        }
+        // Reset the select field
+        select.value = "";
       }
 
-      function selectType(element) {
-        const typeId = element.dataset.typeId;
-        const typeName = element.textContent;
+      // Removes a type when the corresponding remove button is clicked
+      function removeType(button) {
+        const typeId = button.dataset.typeId;
+        // Extract the type name from the tag
+        const typeName = button.previousElementSibling.textContent.trim();
 
-        // Add to selected types display
-        const selectedTypesDiv = document.getElementById("selected-types");
-        const newTag = document.createElement("div");
-        newTag.className = "type-tag";
-        newTag.innerHTML = `
-              ${typeName}
-              <button
-                  type="button"
-                  class="ml-2 text-gray-500 hover:text-gray-700"
-                  onclick="removeType('${typeId}')"
-              >
-                  ×
-              </button>
-          `;
-        selectedTypesDiv.appendChild(newTag);
+        // Remove the tag
+        button.parentElement.remove();
 
-        // Add to hidden select
-        const hiddenSelect = document.getElementById("type-select");
+        // Remove the corresponding hidden input
+        const hiddenInput = document.querySelector(
+          `#hidden-type-inputs input[value="${typeId}"]`
+        );
+        if (hiddenInput) {
+          hiddenInput.remove();
+        }
+
+        // Add the removed type back to the select options
+        const select = document.getElementById("type-select-native");
         const option = document.createElement("option");
         option.value = typeId;
-        option.selected = true;
-        hiddenSelect.appendChild(option);
-
-        // Remove from dropdown options
-        element.remove();
-
-        // Close dropdown
-        toggleDropdown();
+        option.textContent = typeName;
+        select.appendChild(option);
       }
-
-      function removeType(typeId) {
-        // Remove from selected display
-        const button = document.querySelector(
-          `#selected-types button[onclick="removeType('${typeId}')"]`
-        );
-        if (button) {
-          button.closest(".type-tag").remove();
-        }
-
-        // Remove from hidden select
-        const option = document.querySelector(
-          `#type-select option[value="${typeId}"]`
-        );
-        if (option) {
-          option.remove();
-        }
-
-        // Add back to dropdown options
-        const type = allTypes.find((t) => t.id == typeId);
-        if (type) {
-          const optionsDiv = document.getElementById("type-options");
-          const newOption = document.createElement("div");
-          newOption.className = "dropdown-option px-4 py-2 cursor-pointer";
-          newOption.dataset.typeId = typeId;
-          newOption.textContent = type.name;
-          newOption.onclick = () => selectType(newOption);
-          optionsDiv.appendChild(newOption);
-        }
-      }
-
-      // Close dropdown when clicking outside
-      document.addEventListener("click", function (event) {
-        const dropdown = document.getElementById("type-dropdown");
-        const button = document.getElementById("type-dropdown-toggle");
-        if (
-          !dropdown.contains(event.target) &&
-          !button.contains(event.target)
-        ) {
-          dropdown.classList.add("hidden");
-        }
-      });
     </script>
   </body>
 </html>

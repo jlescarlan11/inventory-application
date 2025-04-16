@@ -10,7 +10,6 @@
     class="relative flex flex-col py-16 px-8 text-[var(--color-text)] min-h-dvh sm:px-4 bg-no-repeat bg-center bg-fixed bg-cover"
     style="background-image: url('/wp10742485.webp')"
   >
-    <!-- Overlay -->
     <div class="absolute inset-0 bg-[var(--color-primary)]/50 z-0"></div>
     <%- include('navbar') %>
     <main class="container sm:mx-auto py-4 gap-4 justify-start z-10">
@@ -67,35 +66,22 @@
               <% }); %>
             </div>
 
-            <!-- Dropdown Container -->
-            <div class="relative">
-              <button
-                type="button"
-                onclick="toggleDropdown()"
-                class="w-full px-3 py-2 text-left border border-[var(--color-text)] rounded-md text-[var(--color-text)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-              >
-                Select Pokémon...
-              </button>
-
-              <!-- Custom Dropdown -->
-              <div
-                id="pokemon-dropdown"
-                class="hidden absolute w-full mt-1 bg-[var(--color-secondary)] border border-[var(--color-text)] rounded-md shadow-lg z-10 max-h-60 overflow-auto"
-              >
-                <div id="pokemon-list" class="divide-y">
-                  <% pokemons.forEach(pokemon => { %> <% if (!(selectedPokemons
-                  || []).includes(String(pokemon.id))) { %>
-                  <div
-                    class="px-4 py-2 hover:bg-[var(--color-accent)]/50 cursor-pointer"
-                    data-pokemon-id="<%= pokemon.id %>"
-                    onclick="selectPokemon(this)"
-                  >
-                    <%= pokemon.pokemon_name %>
-                  </div>
-                  <% } %> <% }); %>
-                </div>
-              </div>
-            </div>
+            <!-- Native Select Element -->
+            <select
+              id="pokemon-select"
+              class="w-full px-3 py-2 border border-[var(--color-text)] rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] text-text/50"
+              onchange="handlePokemonSelect(event)"
+            >
+              <option value="" class="" selected disabled>
+                Select a Pokémon...
+              </option>
+              <% pokemons.forEach(pokemon => { %> <% if (!(selectedPokemons ||
+              []).includes(String(pokemon.id))) { %>
+              <option value="<%= pokemon.id %>" class="text-primary">
+                <%= pokemon.pokemon_name %>
+              </option>
+              <% } %> <% }); %>
+            </select>
           </div>
 
           <!-- Form Actions -->
@@ -119,51 +105,50 @@
     </main>
 
     <script>
-      function toggleDropdown() {
-        const dropdown = document.getElementById("pokemon-dropdown");
-        dropdown.classList.toggle("hidden");
-      }
+      function handlePokemonSelect(event) {
+        const select = event.target;
+        const selectedOption = select.options[select.selectedIndex];
+        const pokemonId = selectedOption.value;
+        const pokemonName = selectedOption.text;
 
-      function selectPokemon(element) {
-        const pokemonId = element.dataset.pokemonId;
-        const pokemonName = element.textContent.trim();
+        if (pokemonId) {
+          // Add to selected list
+          const selectedDiv = document.getElementById("selected-pokemon");
+          const newTag = document.createElement("div");
+          newTag.className =
+            "bg-[var(--color-accent)]/50 text-[var(--color-primary)] px-2 py-1 rounded flex items-center";
+          newTag.innerHTML = `
+            <span class="text-xs">${pokemonName}</span>
+            <button 
+              type="button"
+              data-pokemon-id="${pokemonId}"
+              class="ml-2 hover:text-[var(--color-accent)]"
+              onclick="removePokemon(this)"
+            >
+              ×
+            </button>
+          `;
+          selectedDiv.appendChild(newTag);
 
-        // Add to selected list
-        const selectedDiv = document.getElementById("selected-pokemon");
-        const newTag = document.createElement("div");
-        newTag.className =
-          "bg-[var(--color-accent)]/50 text-[var(--color-primary)] px-2 py-1 rounded flex items-center";
-        newTag.innerHTML = `
-                <span>${pokemonName}</span>
-                <button 
-                    type="button"
-                    data-pokemon-id="${pokemonId}"
-                    class="ml-2 hover:text-[var(--color-accent)]"
-                    onclick="removePokemon(this)"
-                >
-                    ×
-                </button>
-            `;
-        selectedDiv.appendChild(newTag);
+          // Add hidden input
+          const hiddenInputs = document.getElementById("hidden-inputs");
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = "pokemons[]";
+          input.value = pokemonId;
+          hiddenInputs.appendChild(input);
 
-        // Add hidden input
-        const hiddenInputs = document.getElementById("hidden-inputs");
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = "pokemons[]";
-        input.value = pokemonId;
-        hiddenInputs.appendChild(input);
+          // Remove from select options
+          selectedOption.remove();
+        }
 
-        // Remove from dropdown
-        element.remove();
-
-        // Close dropdown
-        toggleDropdown();
+        // Reset select
+        select.value = "";
       }
 
       function removePokemon(button) {
         const pokemonId = button.dataset.pokemonId;
-        const pokemonName = button.previousElementSibling.textContent;
+        const pokemonName = button.previousElementSibling.textContent.trim();
 
         // Remove tag
         button.parentElement.remove();
@@ -173,28 +158,13 @@
           .querySelector(`#hidden-inputs input[value="${pokemonId}"]`)
           .remove();
 
-        // Add back to dropdown
-        const pokemonList = document.getElementById("pokemon-list");
-        const newOption = document.createElement("div");
-        newOption.className =
-          "px-4 py-2 hover:bg-[var(--color-accent)]/50 cursor-pointer";
-        newOption.dataset.pokemonId = pokemonId;
-        newOption.textContent = pokemonName;
-        newOption.onclick = () => selectPokemon(newOption);
-        pokemonList.appendChild(newOption);
+        // Add back to select options
+        const select = document.getElementById("pokemon-select");
+        const option = document.createElement("option");
+        option.value = pokemonId;
+        option.textContent = pokemonName;
+        select.appendChild(option);
       }
-
-      // Close dropdown when clicking outside
-      document.addEventListener("click", function (event) {
-        const dropdown = document.getElementById("pokemon-dropdown");
-        const button = document.querySelector('[onclick="toggleDropdown()"]');
-        if (
-          !dropdown.contains(event.target) &&
-          !button.contains(event.target)
-        ) {
-          dropdown.classList.add("hidden");
-        }
-      });
     </script>
   </body>
 </html>
